@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/drpiou/axios)
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/drpiou/axios)
 ![Jest tests](https://img.shields.io/badge/passed%20test-1-green)
-![Jest tests](https://img.shields.io/badge/stage-beta-important)
+![Jest tests](https://img.shields.io/badge/stage-experimental-important)
 ![GitHub all releases](https://img.shields.io/github/downloads/drpiou/axios/total)
 
 The `@drpiou/axios` package wraps the `axios` package.
