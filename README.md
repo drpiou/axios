@@ -36,11 +36,11 @@ yarn add axios@^0.27.2
 
 ## Example
 
-```typescript jsx
+```typescript
 import { prepareAxios } from '@drpiou/axios';
 
 const request = prepareAxios({
-  baseURL: 'https://my.domain',
+  baseURL: 'https://api.domain.com',
   url: 'test',
 });
 
