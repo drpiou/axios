@@ -16,6 +16,7 @@ export type AxiosLog = 'verbose' | 'info' | 'success' | 'error' | 'response' | '
 
 export type AxiosOptions<SD = any, ED = any> = {
   abort?: boolean;
+  axios?: typeof axios;
   isNetworkConnected?: () => Promise<boolean>;
   log?: AxiosLog;
   test?: boolean;
@@ -42,7 +43,9 @@ export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
   isAxiosError: boolean;
   isError: true;
   isCancel: boolean;
+  isConnexionError: boolean;
   isNetworkError?: boolean;
+  isTimeoutError: boolean;
   response?: AxiosResponse<ED, CD>;
 };
 
@@ -59,9 +62,20 @@ export type AxiosRequest<SD = any, ED = any, CD = any> = {
   abort: AxiosRequestAbort;
 };
 
-export type AxiosApiRequest<CD = any, SD = any, ED = any> = CD extends undefined
-  ? (data?: null, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>
-  : (data: CD, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
+export type AxiosRequestData<CD = any, SD = any, ED = any> = (
+  data: CD,
+  options?: AxiosOptions<SD, ED>,
+) => AxiosRequest<SD, ED, CD>;
+
+export type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (
+  data?: CD | null,
+  options?: AxiosOptions<SD, ED>,
+) => AxiosRequest<SD, ED, CD>;
+
+export type AxiosRequestDataVoid<SD = any, ED = any> = (
+  data?: null,
+  options?: AxiosOptions<SD, ED>,
+) => AxiosRequest<SD, ED, never>;
 
 type AxiosAbortSignal = {
   current: () => void;
@@ -77,6 +91,7 @@ const DEFAULT_STATUS = 200;
 
 const DEFAULT_OPTIONS: AxiosOptions = {
   abort: false,
+  axios,
   log: DEFAULT_LOG,
   test: false,
   testCancel: false,
@@ -192,7 +207,7 @@ const begin = async <SD = any, ED = any, CD = any>(
     }
   } else {
     try {
-      response = await axios(config);
+      response = await (options.axios ?? axios)(config);
     } catch (e) {
       return parseError(e as AxiosException<ED, CD> | Error, config, options, startTime);
     }
@@ -222,7 +237,11 @@ const parseError = async <ED = any, CD = any>(
 ): Promise<AxiosResponseError<ED, CD>> => {
   const networkConnected = await options.isNetworkConnected?.();
 
-  const isAxiosError = 'response' in error;
+  const isTimeoutError = 'code' in error && error.code === 'ECONNABORTED';
+
+  const isConnexionError = 'code' in error && error.code === 'ERR_NETWORK';
+
+  const isAxiosError = isTimeoutError || 'response' in error;
 
   const endTime = Date.now();
 
@@ -231,9 +250,11 @@ const parseError = async <ED = any, CD = any>(
     elapsedTime: endTime - startTime,
     error,
     isAxiosError,
-    isCancel: axios.isCancel(error),
+    isCancel: (options.axios ?? axios).isCancel(error),
     isError: true,
+    isConnexionError: isTimeoutError || isConnexionError,
     isNetworkError: isAxiosError ? error.__NETWORK_ERROR__ || !networkConnected : undefined,
+    isTimeoutError,
     response: isAxiosError ? error.response : undefined,
   };
 
@@ -247,11 +268,3 @@ const parseError = async <ED = any, CD = any>(
 const formatFullUrl = <CD = any>(config: AxiosConfig<CD>): string | undefined => {
   return filter([trimEnd(config.baseURL, '/'), trimStart(config.url, '/')]).join('/') || undefined;
 };
-
-const data = prepareAxios({ url: '', data: { test: 'me' } });
-
-void data.start().then((response) => {
-  if (!response.isError) {
-    console.log('__DEV__', { test: response.data.retour });
-  }
-});
