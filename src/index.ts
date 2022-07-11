@@ -9,6 +9,8 @@ export type {
   AxiosRequestStart,
   AxiosRequestAbort,
   AxiosRequest,
-  AxiosApiRequest,
+  AxiosRequestData,
+  AxiosRequestDataOptional,
+  AxiosRequestDataVoid,
 } from './lib/index';
 export { prepareAxios } from './lib/index';

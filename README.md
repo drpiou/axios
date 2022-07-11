@@ -4,7 +4,6 @@
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/drpiou/axios)
 ![Jest tests](https://img.shields.io/badge/passed%20test-1-green)
 ![Jest tests](https://img.shields.io/badge/stage-experimental-important)
-![GitHub all releases](https://img.shields.io/github/downloads/drpiou/axios/total)
 
 The `@drpiou/axios` package wraps the `axios` package.
 
@@ -61,7 +60,8 @@ type AxiosLog = 'verbose' | 'info' | 'success' | 'error' | 'response' | 'none';
 
 type AxiosOptions<SD = unknown, ED = unknown> = {
   abort?: boolean; // Default: false
-  isNetworkConnected?: () => Promise<boolean>;
+  axios?: typeof axios; // Default: axios
+  isNetworkConnected?: () => Promise<boolean>
   log?: AxiosLog; // Default: 'none'
   test?: boolean; // Default: false
   testCancel?: boolean; // Default: false
@@ -87,7 +87,9 @@ type AxiosResponseError<ED = unknown, CD = unknown> = AxiosResponseBase & {
   isAxiosError: boolean;
   isError: true;
   isCancel: boolean;
+  isConnexionError: boolean;
   isNetworkError?: boolean;
+  isTimeoutError: boolean;
   response?: AxiosResponse<ED, CD>;
 };
 
@@ -106,7 +108,18 @@ type AxiosRequest<SD = unknown, ED = unknown, CD = unknown> = {
   abort: AxiosRequestAbort;
 };
 
-type AxiosApiRequest<CD = any, SD = any, ED = any> = CD extends undefined
-  ? (data?: null, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>
-  : (data: CD, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
+type AxiosRequestData<CD = any, SD = any, ED = any> = (
+  data: CD,
+  options?: AxiosOptions<SD, ED>,
+) => AxiosRequest<SD, ED, CD>;
+
+type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (
+  data?: CD | null,
+  options?: AxiosOptions<SD, ED>,
+) => AxiosRequest<SD, ED, CD>;
+
+type AxiosRequestDataVoid<SD = any, ED = any> = (
+  data?: null,
+  options?: AxiosOptions<SD, ED>,
+) => AxiosRequest<SD, ED, never>;
 ```
