@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Debug } from '@drpiou/ts-utils';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import filter from 'lodash/filter';
-import get from 'lodash/get';
 import trimEnd from 'lodash/trimEnd';
 import trimStart from 'lodash/trimStart';
 
@@ -44,8 +45,8 @@ export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
   isError: true;
   isCancel: boolean;
   isConnexionError: boolean;
+  isConnexionTimeoutError: boolean;
   isNetworkError?: boolean;
-  isTimeoutError: boolean;
   response?: AxiosResponse<ED, CD>;
 };
 
@@ -106,32 +107,57 @@ export const prepareAxios = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options?: AxiosOptions<SD, ED>,
 ): AxiosRequest<SD, ED, CD> => {
-  const controller = new AbortController();
+  const prepareOptions = { ...DEFAULT_OPTIONS, ...options };
 
-  const axiosConfig: AxiosConfig<CD> = {
-    ...config,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json; charset=UTF-8',
-      ...get(config, 'headers'),
-    },
-    signal: controller.signal,
-  };
+  if (['verbose'].includes(prepareOptions.log || DEFAULT_LOG)) {
+    debug.log(formatSign('axios:prepare', prepareOptions), formatFullUrl(config), { config, options: prepareOptions });
+  }
 
+  if (prepareOptions.test) {
+    return prepareAxiosTest(config, prepareOptions);
+  } else {
+    return prepareAxiosReal(config, prepareOptions);
+  }
+};
+
+export const prepareAxiosTest = <SD = any, ED = any, CD = any>(
+  config: AxiosConfig<CD>,
+  options?: AxiosOptions<SD, ED>,
+): AxiosRequest<SD, ED, CD> => {
   const testSignal: AxiosAbortSignal = {
     current: () => undefined,
   };
 
-  const prepareOptions = { ...DEFAULT_OPTIONS, ...options, testSignal } as AxiosStartOptions<SD, ED>;
+  const start: AxiosRequestStart<SD, ED, CD> = (overrideOptions) => {
+    const startOptions: AxiosStartOptions<SD, ED> = { ...options, ...overrideOptions, testSignal };
 
-  if (['verbose'].includes(prepareOptions.log || DEFAULT_LOG)) {
-    debug.log('axios:prepare', formatFullUrl(axiosConfig), { config: axiosConfig });
-  }
+    const request = begin(config, startOptions);
+
+    if (startOptions.abort) {
+      testSignal.current();
+    }
+
+    return request;
+  };
+
+  return {
+    start,
+    abort: (): void => {
+      testSignal.current();
+    },
+  };
+};
+
+export const prepareAxiosReal = <SD = any, ED = any, CD = any>(
+  config: AxiosConfig<CD>,
+  options?: AxiosOptions<SD, ED>,
+): AxiosRequest<SD, ED, CD> => {
+  const controller = new AbortController();
 
   const start: AxiosRequestStart<SD, ED, CD> = (overrideOptions) => {
-    const startOptions: AxiosStartOptions<SD, ED> = { ...prepareOptions, ...overrideOptions };
+    const startOptions: AxiosOptions<SD, ED> = { ...options, ...overrideOptions };
 
-    const request = begin(axiosConfig, startOptions);
+    const request = begin({ ...config, signal: controller.signal }, startOptions);
 
     if (startOptions.abort) {
       controller.abort();
@@ -143,7 +169,6 @@ export const prepareAxios = <SD = any, ED = any, CD = any>(
   return {
     start,
     abort: (): void => {
-      testSignal.current();
       controller.abort();
     },
   };
@@ -151,68 +176,97 @@ export const prepareAxios = <SD = any, ED = any, CD = any>(
 
 const begin = async <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
-  options: AxiosStartOptions<SD, ED>,
+  options: AxiosStartOptions<SD, ED> | AxiosOptions<SD, ED>,
 ): Promise<AxiosResponseRequest<SD, ED, CD>> => {
   const startTime = Date.now();
 
   if (['verbose', 'info'].includes(options.log || DEFAULT_LOG)) {
-    debug.log('axios:start', formatFullUrl(config), { config, startTime });
+    debug.log(formatSign('axios:start', options), formatFullUrl(config), { config, options, startTime });
   }
+
+  if (options.test) {
+    return beginTest(config, options as AxiosStartOptions<SD, ED>);
+  } else {
+    return beginReal(config, options);
+  }
+};
+
+const beginTest = async <SD = any, ED = any, CD = any>(
+  config: AxiosConfig<CD>,
+  options: AxiosStartOptions<SD, ED>,
+): Promise<AxiosResponseRequest<SD, ED, CD>> => {
+  const startTime = Date.now();
+
+  const response: AxiosResponse<SD | ED | undefined, CD> = {
+    data: options.testData,
+    status: options.testStatus ?? DEFAULT_STATUS,
+    statusText: 'test',
+    headers: {},
+    config,
+  };
+
+  let testCancelled = false;
+
+  if (options.testSleep) {
+    await new Promise<void>((resolve) => {
+      const resolveThis = (): void => {
+        options.testSignal.current = (): void => undefined;
+
+        resolve();
+      };
+
+      const timeout = setTimeout(resolveThis, options.testSleep);
+
+      options.testSignal.current = (): void => {
+        testCancelled = true;
+
+        clearTimeout(timeout);
+
+        resolveThis();
+      };
+    });
+  }
+
+  const error = new AxiosException('Test', 'TEST', config, null, response as AxiosResponse<ED, CD>);
+
+  if (options.testCancel || testCancelled) {
+    error.__CANCEL__ = true;
+
+    return parseError(error, config, options, startTime);
+  } else if (options.testNetworkError) {
+    error.__NETWORK_ERROR__ = true;
+
+    return parseError(error, config, options, startTime);
+  } else if (response.status < 200 || response.status >= 300) {
+    return parseError(error, config, options, startTime);
+  }
+
+  return parseSuccess(response as AxiosResponse<SD, CD>, config, options, startTime);
+};
+
+const beginReal = async <SD = any, ED = any, CD = any>(
+  config: AxiosConfig<CD>,
+  options: AxiosOptions<SD, ED>,
+): Promise<AxiosResponseRequest<SD, ED, CD>> => {
+  const startTime = Date.now();
 
   let response;
 
-  if (options.test) {
-    response = {
-      data: options.testData,
-      status: options.testStatus ?? DEFAULT_STATUS,
-      statusText: 'test',
-      headers: {},
-      config,
-    };
-
-    let testCancelled = false;
-
-    if (options.testSleep) {
-      await new Promise<void>((resolve) => {
-        const resolveThis = (): void => {
-          options.testSignal.current = (): void => undefined;
-
-          resolve();
-        };
-
-        const timeout = setTimeout(resolveThis, options.testSleep);
-
-        options.testSignal.current = (): void => {
-          testCancelled = true;
-
-          clearTimeout(timeout);
-
-          resolveThis();
-        };
-      });
-    }
-
-    const error = new AxiosException('Test', 'TEST', config, null, response as AxiosResponse<ED, CD>);
-
-    if (options.testCancel || testCancelled) {
-      error.__CANCEL__ = true;
-
-      return parseError(error, config, options, startTime);
-    } else if (options.testNetworkError) {
-      error.__NETWORK_ERROR__ = true;
-
-      return parseError(error, config, options, startTime);
-    } else if (response.status < 200 || response.status >= 300) {
-      return parseError(error, config, options, startTime);
-    }
-  } else {
-    try {
-      response = await (options.axios ?? axios)(config);
-    } catch (e) {
-      return parseError(e as AxiosException<ED, CD> | Error, config, options, startTime);
-    }
+  try {
+    response = await (options.axios ?? axios)(config);
+  } catch (e) {
+    return parseError(e as AxiosException<ED, CD> | Error, config, options, startTime);
   }
 
+  return parseSuccess(response, config, options, startTime);
+};
+
+const parseSuccess = <SD = any, ED = any, CD = any>(
+  response: AxiosResponse<SD, CD>,
+  config: AxiosConfig<CD>,
+  options: AxiosOptions<SD, ED>,
+  startTime: number,
+): AxiosResponseSuccess<SD, CD> => {
   const endTime = Date.now();
 
   const successResponse: AxiosResponseSuccess<SD, CD> = {
@@ -223,7 +277,7 @@ const begin = async <SD = any, ED = any, CD = any>(
   };
 
   if (['verbose', 'info', 'success', 'response'].includes(options.log || DEFAULT_LOG)) {
-    debug.info('axios:success', formatFullUrl(config), { response: successResponse, endTime });
+    debug.info(formatSign('axios:success', options), formatFullUrl(config), { response: successResponse, options, endTime });
   }
 
   return successResponse;
@@ -235,36 +289,50 @@ const parseError = async <ED = any, CD = any>(
   options: AxiosOptions<any, ED>,
   startTime: number,
 ): Promise<AxiosResponseError<ED, CD>> => {
-  const networkConnected = await options.isNetworkConnected?.();
-
-  const isTimeoutError = 'code' in error && error.code === 'ECONNABORTED';
-
-  const isConnexionError = 'code' in error && error.code === 'ERR_NETWORK';
-
-  const isAxiosError = isTimeoutError || 'response' in error;
-
   const endTime = Date.now();
 
+  const hasCode = 'code' in error;
+  const hasResponse = 'response' in error;
+
+  const isConnexionError = hasCode && error.code === 'ERR_NETWORK';
+  const isConnexionTimeoutError = hasCode && error.code === 'ECONNABORTED';
+
+  const isAxiosError = hasResponse || isConnexionError || isConnexionTimeoutError;
+
+  const isNetworkConnected = options.test
+    ? hasResponse && error.__NETWORK_ERROR__ !== undefined
+      ? !error.__NETWORK_ERROR__
+      : undefined
+    : await options.isNetworkConnected?.();
+
   const errorResponse: AxiosResponseError<ED, CD> = {
-    data: isAxiosError ? error.response?.data : undefined,
+    data: hasResponse ? error.response?.data : undefined,
     elapsedTime: endTime - startTime,
     error,
     isAxiosError,
     isCancel: (options.axios ?? axios).isCancel(error),
     isError: true,
-    isConnexionError: isTimeoutError || isConnexionError,
-    isNetworkError: isAxiosError ? error.__NETWORK_ERROR__ || !networkConnected : undefined,
-    isTimeoutError,
-    response: isAxiosError ? error.response : undefined,
+    isConnexionError: isConnexionError || isConnexionTimeoutError,
+    isConnexionTimeoutError,
+    isNetworkError: isNetworkConnected === undefined ? undefined : !isNetworkConnected,
+    response: hasResponse ? error.response : undefined,
   };
 
   if (['verbose', 'info', 'error', 'response'].includes(options.log || DEFAULT_LOG)) {
-    debug.error('axios:error', formatFullUrl(config), { response: errorResponse, endTime });
+    if (hasResponse) {
+      debug.error(formatSign('axios:error', options), formatFullUrl(config), { response: errorResponse, options, endTime });
+    } else {
+      debug.error(formatSign('axios:error', options), formatFullUrl(config), { config, options, endTime });
+    }
   }
 
   return errorResponse;
 };
 
-const formatFullUrl = <CD = any>(config: AxiosConfig<CD>): string | undefined => {
+const formatSign = (text: string, options: AxiosOptions): string => {
+  return `${text}${options.test ? ':test' : ''}`;
+};
+
+const formatFullUrl = (config: AxiosConfig): string | undefined => {
   return filter([trimEnd(config.baseURL, '/'), trimStart(config.url, '/')]).join('/') || undefined;
 };
