@@ -1,6 +1,6 @@
 {
   "name": "@drpiou/axios",
-  "version": "0.0.4",
+  "version": "0.0.3",
   "description": "Returns unified axios responses.",
   "keywords": [],
   "author": "Alex <hello@drpiou.dev>",
