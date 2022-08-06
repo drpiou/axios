@@ -2030,7 +2030,7 @@ const ie = "none", Yn = 200, ub = {
     config: e
   };
   let a = !1;
-  r.testSleep && await new Promise((o) => {
+  r.testSleep && r.testCancel !== !0 && await new Promise((o) => {
     const u = () => {
       r.testSignal.current = () => {
       }, o();
@@ -2060,20 +2060,20 @@ const ie = "none", Yn = 200, ub = {
   };
   return ["verbose", "info", "success", "response"].includes(t.log || ie) && ee.info(re("axios:success", t), te(r), { response: i, options: t, endTime: a }), i;
 }, le = async (e, r, t, n) => {
-  var f, p, _;
-  const a = Date.now(), i = "code" in e, s = "response" in e, o = i && e.code === "ERR_NETWORK", u = i && e.code === "ECONNABORTED", c = s || o || u, l = t.test ? s && e.__NETWORK_ERROR__ !== void 0 ? !e.__NETWORK_ERROR__ : void 0 : await ((f = t.isNetworkConnected) == null ? void 0 : f.call(t)), d = {
-    data: s ? (p = e.response) == null ? void 0 : p.data : void 0,
+  var p, _, y;
+  const a = Date.now(), i = "code" in e, s = "response" in e, o = ((p = t.axios) != null ? p : Er).isCancel(e), u = i && e.code === "ERR_NETWORK", c = i && e.code === "ECONNABORTED", l = s || o || u || c, d = t.test ? s && e.__NETWORK_ERROR__ !== void 0 ? !e.__NETWORK_ERROR__ : void 0 : await ((_ = t.isNetworkConnected) == null ? void 0 : _.call(t)), f = {
+    data: s ? (y = e.response) == null ? void 0 : y.data : void 0,
     elapsedTime: a - n,
     error: e,
-    isAxiosError: c,
-    isCancel: ((_ = t.axios) != null ? _ : Er).isCancel(e),
+    isAxiosError: l,
+    isCancel: o,
     isError: !0,
-    isConnexionError: o || u,
-    isConnexionTimeoutError: u,
-    isNetworkError: l === void 0 ? void 0 : !l,
+    isConnexionError: u || c,
+    isConnexionTimeoutError: c,
+    isNetworkError: d === void 0 ? void 0 : !d,
     response: s ? e.response : void 0
   };
-  return ["verbose", "info", "error", "response"].includes(t.log || ie) && (s ? ee.error(re("axios:error", t), te(r), { response: d, options: t, endTime: a }) : ee.error(re("axios:error", t), te(r), { config: r, options: t, endTime: a })), d;
+  return ["verbose", "info", "error", "response"].includes(t.log || ie) && (s ? ee.error(re("axios:error", t), te(r), { response: f, options: t, endTime: a }) : ee.error(re("axios:error", t), te(r), { config: r, options: t, endTime: a })), f;
 }, re = (e, r) => `${e}${r.test ? ":test" : ""}`, te = (e) => Wh([Xy(e.baseURL, "/"), sb(e.url, "/")]).join("/") || void 0;
 export {
   pb as prepareAxios

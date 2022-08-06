@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Debug } from '@drpiou/ts-utils';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import filter from 'lodash/filter';
