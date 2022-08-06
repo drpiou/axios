@@ -205,7 +205,7 @@ const beginTest = async <SD = any, ED = any, CD = any>(
 
   let testCancelled = false;
 
-  if (options.testSleep) {
+  if (options.testSleep && options.testCancel !== true) {
     await new Promise<void>((resolve) => {
       const resolveThis = (): void => {
         options.testSignal.current = (): void => undefined;
@@ -292,10 +292,11 @@ const parseError = async <ED = any, CD = any>(
   const hasCode = 'code' in error;
   const hasResponse = 'response' in error;
 
+  const isCancelError = (options.axios ?? axios).isCancel(error);
   const isConnexionError = hasCode && error.code === 'ERR_NETWORK';
   const isConnexionTimeoutError = hasCode && error.code === 'ECONNABORTED';
 
-  const isAxiosError = hasResponse || isConnexionError || isConnexionTimeoutError;
+  const isAxiosError = hasResponse || isCancelError || isConnexionError || isConnexionTimeoutError;
 
   const isNetworkConnected = options.test
     ? hasResponse && error.__NETWORK_ERROR__ !== undefined
@@ -308,7 +309,7 @@ const parseError = async <ED = any, CD = any>(
     elapsedTime: endTime - startTime,
     error,
     isAxiosError,
-    isCancel: (options.axios ?? axios).isCancel(error),
+    isCancel: isCancelError,
     isError: true,
     isConnexionError: isConnexionError || isConnexionTimeoutError,
     isConnexionTimeoutError,

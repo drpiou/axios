@@ -1,42 +1,79 @@
 import './style.css'
-import {testAbortApi} from "./tests/abortApi";
-import {testAbortTest} from "./tests/abortTest";
-import {testCancelTest} from "./tests/cancelTest";
-import {testErrorTest} from "./tests/errorTest";
-import {testNetworkErrorTest} from "./tests/networkErrorTest";
-import {testSuccessApi} from "./tests/successApi";
-import {testSuccessTest} from "./tests/successTest";
+import {testBlock} from "./testBlock";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <div class="card">
-      <button id="success-api" type="button">success-api</button>
-    </div>
-    <div class="card">
-      <button id="success-test" type="button">success-test</button>
-    </div>
-    <div class="card">
-      <button id="error-test" type="button">error-test</button>
-    </div>
-    <div class="card">
-      <button id="cancel-test" type="button">cancel-test</button>
-    </div>
-    <div class="card">
-      <button id="network-error-test" type="button">network-error-test</button>
-    </div>
-    <div class="card">
-      <button id="abort-api" type="button">abort-api</button>
-    </div>
-    <div class="card">
-      <button id="abort-test" type="button">abort-test</button>
-    </div>
-  </div>
-`
+const configApi = {
+  baseURL: 'https://api.agify.io',
+  params: {
+    name: 'test',
+  },
+};
 
-testAbortApi(document.querySelector<HTMLButtonElement>('#abort-api')!)
-testAbortTest(document.querySelector<HTMLButtonElement>('#abort-test')!)
-testCancelTest(document.querySelector<HTMLButtonElement>('#cancel-test')!)
-testErrorTest(document.querySelector<HTMLButtonElement>('#error-test')!)
-testNetworkErrorTest(document.querySelector<HTMLButtonElement>('#network-error-test')!)
-testSuccessApi(document.querySelector<HTMLButtonElement>('#success-api')!)
-testSuccessTest(document.querySelector<HTMLButtonElement>('#success-test')!)
+const configTest = {
+  baseURL: 'https://i.dont.exists',
+};
+
+const optionsTest = {
+  test: true,
+  testData: {
+    foo: 'boo',
+  },
+};
+
+const defaultResult = {
+  code: 200,
+  isError: false,
+};
+
+const errorResult = {
+  isAxiosError: true,
+  isCancel: false,
+  isConnexionError: false,
+  isConnexionTimeoutError: false,
+  isError: true,
+};
+
+const app = document.querySelector<HTMLDivElement>('#app');
+
+if (app) {
+  testBlock(app, 'success-api', configApi, {}, defaultResult)
+
+  testBlock(app, 'success-test', configTest, {
+    ...optionsTest,
+    testStatus: 200
+  }, defaultResult)
+
+  testBlock(app, 'abort-api', configApi, {
+    testCancel: true,
+  }, {
+    ...errorResult,
+    isCancel: true,
+  })
+
+  testBlock(app, 'abort-test', configTest, {
+    ...optionsTest,
+    testStatus: 200,
+    testCancel: true,
+    testSleep: 5000
+  }, {
+    ...errorResult,
+    isCancel: true,
+  })
+
+  testBlock(app, 'error-test', configTest, {
+    ...optionsTest,
+    testStatus: 404
+  }, {
+    ...errorResult,
+    code: 404,
+  })
+
+  testBlock(app, 'network-error-test', configTest, {
+    ...optionsTest,
+    testStatus: 200,
+    testNetworkError: true,
+    testSleep: 1000
+  }, {
+    ...errorResult,
+    isNetworkError: true,
+  })
+}
