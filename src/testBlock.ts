@@ -1,5 +1,5 @@
 import { log } from '@drpiou/ts-utils';
-import { mapValues, uniq, uniqueId, values } from 'lodash';
+import { mapValues, uniq, values } from 'lodash';
 import { AxiosConfig, AxiosOptions, prepareAxios } from '../lib';
 
 export type Result = {
@@ -25,7 +25,6 @@ export function testBlock(app: HTMLDivElement, title: string, config: AxiosConfi
   // Create card button
   const button = document.createElement('button');
 
-  button.id = uniqueId();
   button.innerHTML = title;
 
   card.appendChild(button);

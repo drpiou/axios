@@ -1,8 +1,8 @@
 # `@drpiou/axios`
 
-![GitHub](https://img.shields.io/github/license/drpiou/axios)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/drpiou/axios)
-![Jest tests](https://img.shields.io/badge/stage-experimental-important)
+![Licence](https://img.shields.io/github/license/drpiou/axios)
+![Package.json version](https://img.shields.io/github/package-json/v/drpiou/axios)
+![Stage](https://img.shields.io/badge/stage-experimental-important)
 
 The `@drpiou/axios` package wraps the `axios` package.
 
