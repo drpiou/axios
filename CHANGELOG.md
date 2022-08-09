@@ -6,17 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## [0.0.3] - 2022-08-07
+## [0.0.3] - 2022-xx-xx
 
 ### Changed
 
 - axios error returns `isConnexionTimeoutError` instead of `isTimeoutError`
-- internal changes
 
 ### Fixed
 
 - fixed `abort` in `AxiosStartOptions` while in test mode
 - fixed wrong `isAxiosError` when canceled
+- fixed import
 
 ## [0.0.2] - 2022-07-11
 
