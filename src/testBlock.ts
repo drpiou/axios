@@ -12,7 +12,13 @@ export type Result = {
   isNetworkError?: boolean;
 };
 
-export function testBlock(app: HTMLDivElement, title: string, config: AxiosConfig, options: AxiosOptions, expect: Result): void {
+export const testBlock = (
+  app: HTMLDivElement,
+  title: string,
+  config: AxiosConfig,
+  options: AxiosOptions,
+  expect: Result,
+): void => {
   log('create: ', { app, title, config, options, expect });
 
   // Create card
@@ -113,4 +119,4 @@ export function testBlock(app: HTMLDivElement, title: string, config: AxiosConfi
       request.abort();
     }
   });
-}
+};
