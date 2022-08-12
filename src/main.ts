@@ -1,5 +1,5 @@
 import './style.css';
-import { testBlock } from './testBlock';
+import { test } from './tests/test';
 
 const configApi = {
   baseURL: 'https://api.agify.io',
@@ -35,13 +35,13 @@ const errorResult = {
 const app = document.querySelector<HTMLDivElement>('#app');
 
 if (app) {
-  testBlock(app, 'success-api', configApi, {}, defaultResult);
+  test(app, 'success-api', configApi, {}, defaultResult);
 
-  testBlock(app, 'success-test', configTest, { ...optionsTest, testStatus: 200 }, defaultResult);
+  test(app, 'success-test', configTest, { ...optionsTest, testStatus: 200 }, defaultResult);
 
-  testBlock(app, 'abort-api', configApi, { testCancel: true }, { ...errorResult, isCancel: true });
+  test(app, 'abort-api', configApi, { testCancel: true }, { ...errorResult, isCancel: true });
 
-  testBlock(
+  test(
     app,
     'abort-test',
     configTest,
@@ -49,9 +49,9 @@ if (app) {
     { ...errorResult, isCancel: true },
   );
 
-  testBlock(app, 'error-test', configTest, { ...optionsTest, testStatus: 404 }, { ...errorResult, code: 404 });
+  test(app, 'error-test', configTest, { ...optionsTest, testStatus: 404 }, { ...errorResult, code: 404 });
 
-  testBlock(
+  test(
     app,
     'network-error-test',
     configTest,

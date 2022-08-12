@@ -1,6 +1,6 @@
 import { log } from '@drpiou/ts-utils';
 import { mapValues, uniq, values } from 'lodash';
-import { AxiosConfig, AxiosOptions, prepareAxios } from '../lib';
+import { AxiosConfig, AxiosOptions, prepareAxios } from '../../lib';
 
 export type Result = {
   code?: number;
@@ -12,13 +12,7 @@ export type Result = {
   isNetworkError?: boolean;
 };
 
-export const testBlock = (
-  app: HTMLDivElement,
-  title: string,
-  config: AxiosConfig,
-  options: AxiosOptions,
-  expect: Result,
-): void => {
+export const test = (app: HTMLDivElement, title: string, config: AxiosConfig, options: AxiosOptions, expect: Result): void => {
   log('create: ', { app, title, config, options, expect });
 
   // Create card
