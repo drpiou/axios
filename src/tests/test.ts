@@ -57,6 +57,8 @@ export const test = (app: HTMLDivElement, title: string, config: AxiosConfig, op
 
       button.innerHTML = title;
 
+      result.classList.add(expected ? 'success' : 'error');
+
       result.innerHTML = `
         <div>
           <span>status:</span>

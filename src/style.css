@@ -60,6 +60,13 @@ h1 {
   padding: 2em;
 }
 
+.result.success {
+  color: #646cff;
+}
+.result.error {
+  color: orange;
+}
+
 .read-the-docs {
   color: #888;
 }
