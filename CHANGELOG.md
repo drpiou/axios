@@ -8,15 +8,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.0.3] - 2022-xx-xx
 
+### Added
+
+- examples
+
 ### Changed
 
 - axios error returns `isConnexionTimeoutError` instead of `isTimeoutError`
+- rewritten using vite
 
 ### Fixed
 
+- import package in project
 - fixed `abort` in `AxiosStartOptions` while in test mode
 - fixed wrong `isAxiosError` when canceled
 - fixed import
+- some typings
 
 ## [0.0.2] - 2022-07-11
 
