@@ -101,7 +101,7 @@ const DEFAULT_OPTIONS: AxiosOptions = {
   testStatus: DEFAULT_STATUS,
 };
 
-export const debug = new Debug();
+const debug = new Debug();
 
 export const prepareAxios = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
