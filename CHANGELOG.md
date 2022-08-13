@@ -6,13 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.0.3] - 2022-08-14
+
+### Added
+
+- examples
+
+### Changed
+
+- axios error returns `isConnexionTimeoutError` instead of `isTimeoutError`
+- rewritten using vite
+
+### Fixed
+
+- import package in project
+- fixed `abort` in `AxiosStartOptions` while in test mode
+- fixed wrong `isAxiosError` when canceled
+- fixed import
+- some typings
+
 ## [0.0.2] - 2022-07-11
 
 ### Added
 
 - injectable axios instance
-- axios errors also returns isConnexionError
-- axios errors also returns isTimeoutError
+- axios errors also returns `isConnexionError`
+- axios errors also returns `isTimeoutError`
 
 ### Changed
 
@@ -24,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - first commit
 
-[Unreleased]: https://github.com/drpiou/axios/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/drpiou/axios/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/drpiou/axios/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/drpiou/axios/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/drpiou/axios/releases/tag/v0.0.1

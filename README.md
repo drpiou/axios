@@ -1,9 +1,8 @@
 # `@drpiou/axios`
 
-![GitHub](https://img.shields.io/github/license/drpiou/axios)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/drpiou/axios)
-![Jest tests](https://img.shields.io/badge/passed%20test-1-green)
-![Jest tests](https://img.shields.io/badge/stage-experimental-important)
+![Licence](https://img.shields.io/github/license/drpiou/axios)
+![Package.json version](https://img.shields.io/github/package-json/v/drpiou/axios)
+![Stage](https://img.shields.io/badge/stage-experimental-important)
 
 The `@drpiou/axios` package wraps the `axios` package.
 
@@ -44,81 +43,85 @@ const request = prepareAxios({
 });
 
 const response = await request.start();
+
+// or
+//
+// void request.start().then((response) => {});
+//
+// setTimeout(request.abort, 1000);
 ```
 
 ## Documentation
 
 ```typescript
-type prepareAxios = <SD = unknown, ED = unknown, CD = unknown>(
+export type prepareAxios = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options?: AxiosOptions<SD, ED>,
 ) => AxiosRequest<SD, ED, CD>;
 
-type AxiosConfig<CD = unknown> = AxiosRequestConfig<CD>;
+export type AxiosConfig<CD = any> = AxiosRequestConfig<CD>;
 
-type AxiosLog = 'verbose' | 'info' | 'success' | 'error' | 'response' | 'none';
+export type AxiosLog = 'verbose' | 'info' | 'success' | 'error' | 'response' | 'none';
 
-type AxiosOptions<SD = unknown, ED = unknown> = {
-  abort?: boolean; // Default: false
-  axios?: typeof axios; // Default: axios
-  isNetworkConnected?: () => Promise<boolean>
-  log?: AxiosLog; // Default: 'none'
-  test?: boolean; // Default: false
-  testCancel?: boolean; // Default: false
-  testData?: SD | ED; // Default: undefined
-  testNetworkError?: boolean; // Default: false
-  testSleep?: number; // Default: 0 = no sleep
-  testStatus?: number; // Default: 200
+export type AxiosOptions<SD = any, ED = any> = {
+  abort?: boolean;
+  axios?: typeof axios;
+  isNetworkConnected?: () => Promise<boolean>;
+  log?: AxiosLog;
+  test?: boolean;
+  testCancel?: boolean;
+  testData?: SD | ED;
+  testNetworkError?: boolean;
+  testSleep?: number;
+  testStatus?: number;
 };
 
-type AxiosResponseBase = {
+export type AxiosResponseBase = {
   elapsedTime: number;
 };
 
-type AxiosResponseSuccess<SD = unknown, CD = unknown> = AxiosResponseBase & {
+export type AxiosResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
   data: SD;
   isError: false;
   response: AxiosResponse<SD, CD>;
 };
 
-type AxiosResponseError<ED = unknown, CD = unknown> = AxiosResponseBase & {
+export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
   data?: ED;
   error: AxiosError<ED, CD> | Error;
   isAxiosError: boolean;
   isError: true;
   isCancel: boolean;
   isConnexionError: boolean;
+  isConnexionTimeoutError: boolean;
   isNetworkError?: boolean;
-  isTimeoutError: boolean;
   response?: AxiosResponse<ED, CD>;
 };
 
-type AxiosResponseRequest<SD = unknown, ED = unknown, CD = unknown> =
-  | AxiosResponseSuccess<SD, CD>
-  | AxiosResponseError<ED, CD>;
+export type AxiosResponseRequest<SD = any, ED = any, CD = any> = AxiosResponseSuccess<SD, CD> | AxiosResponseError<ED, CD>;
 
-type AxiosRequestStart<SD = unknown, ED = unknown, CD = unknown> = (
+export type AxiosRequestStart<SD = any, ED = any, CD = any> = (
   options?: AxiosOptions<SD, ED>,
 ) => Promise<AxiosResponseRequest<SD, ED, CD>>;
 
-type AxiosRequestAbort = () => void;
+export type AxiosRequestAbort = () => void;
 
-type AxiosRequest<SD = unknown, ED = unknown, CD = unknown> = {
+export type AxiosRequest<SD = any, ED = any, CD = any> = {
   start: AxiosRequestStart<SD, ED, CD>;
   abort: AxiosRequestAbort;
 };
 
-type AxiosRequestData<CD = any, SD = any, ED = any> = (
+export type AxiosRequestData<CD = any, SD = any, ED = any> = (
   data: CD,
   options?: AxiosOptions<SD, ED>,
 ) => AxiosRequest<SD, ED, CD>;
 
-type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (
+export type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (
   data?: CD | null,
   options?: AxiosOptions<SD, ED>,
 ) => AxiosRequest<SD, ED, CD>;
 
-type AxiosRequestDataVoid<SD = any, ED = any> = (
+export type AxiosRequestDataVoid<SD = any, ED = any> = (
   data?: null,
   options?: AxiosOptions<SD, ED>,
 ) => AxiosRequest<SD, ED, never>;
