@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@drpiou/ts-utils@https://github.com/drpiou/ts-utils.git#hotfix/vite-integration":
+"@drpiou/ts-utils@https://github.com/drpiou/ts-utils.git#develop":
   version "0.0.3"
   resolved "https://github.com/drpiou/ts-utils.git#ef04347d04f50e8aee8395fdeaa1c2fce559716f"
 
