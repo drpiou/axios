@@ -2,9 +2,10 @@
 # yarn lockfile v1
 
 
-"@drpiou/ts-utils@https://github.com/drpiou/ts-utils.git#develop":
+"@drpiou/ts-utils@0.0.3":
   version "0.0.3"
-  resolved "https://github.com/drpiou/ts-utils.git#ef04347d04f50e8aee8395fdeaa1c2fce559716f"
+  resolved "https://registry.yarnpkg.com/@drpiou/ts-utils/-/ts-utils-0.0.3.tgz#60b0c53133f14ad98602bf89eff6bd8b3aecf38e"
+  integrity sha512-iC5geBIyyNNwbjjGNrFRg86z4pXHZT8BC82x+bKCJGIl7Nn40wZ8FhFiOSwgUqoslkTTtdUEYXlrHYVQvTT/Gg==
 
 "@esbuild/linux-loong64@0.14.53":
   version "0.14.53"
