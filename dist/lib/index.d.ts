@@ -1,4 +1,3 @@
-import { Debug } from '@drpiou/ts-utils';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 export declare class AxiosException<T = any, D = any> extends AxiosError<T, D> {
     __CANCEL__?: boolean;
@@ -47,7 +46,6 @@ export declare type AxiosRequest<SD = any, ED = any, CD = any> = {
 export declare type AxiosRequestData<CD = any, SD = any, ED = any> = (data: CD, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
 export declare type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (data?: CD | null, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
 export declare type AxiosRequestDataVoid<SD = any, ED = any> = (data?: null, options?: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, never>;
-export declare const debug: Debug;
 export declare const prepareAxios: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options?: AxiosOptions<SD, ED> | undefined) => AxiosRequest<SD, ED, CD>;
 export declare const prepareAxiosTest: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options?: AxiosOptions<SD, ED> | undefined) => AxiosRequest<SD, ED, CD>;
 export declare const prepareAxiosReal: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options?: AxiosOptions<SD, ED> | undefined) => AxiosRequest<SD, ED, CD>;

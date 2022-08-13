@@ -32,6 +32,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build-types": "tsc lib/index.ts --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "preview": "vite preview",
     "toc": "gh-md-toc --insert"
   },
