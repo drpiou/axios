@@ -54,11 +54,7 @@ const response = await request.start();
 ## Documentation
 
 ```typescript
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse as AxiosResponse_Import,
-} from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export type prepareAxios = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
@@ -87,32 +83,6 @@ export type AxiosOptions<SD = any, ED = any> = {
   testStatus?: number;
 };
 
-export type AxiosResponse<SD = any, ED = any, CD = any> =
-  | AxiosResponseSuccess<SD, CD>
-  | AxiosResponseError<ED, CD>;
-
-export type AxiosResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
-  data: SD;
-  isError: false;
-  response: AxiosResponse_Import<SD, CD>;
-};
-
-export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
-  data?: ED;
-  error: AxiosError<ED, CD> | Error;
-  isAxiosError: boolean;
-  isError: true;
-  isCancel: boolean;
-  isConnexionError: boolean;
-  isConnexionTimeoutError: boolean;
-  isNetworkError?: boolean;
-  response?: AxiosResponse_Import<ED, CD>;
-};
-
-type AxiosResponseBase = {
-  elapsedTime: number;
-};
-
 export type AxiosRequest<SD = any, ED = any, CD = any> = {
   start: AxiosRequestStart<SD, ED, CD>;
   abort: AxiosRequestAbort;
@@ -123,4 +93,36 @@ export type AxiosRequestStart<SD = any, ED = any, CD = any> = () => Promise<
 >;
 
 export type AxiosRequestAbort = () => void;
+
+export type AxiosRequestResponse<SD = any, ED = any, CD = any> =
+  | AxiosRequestResponseSuccess<SD, CD>
+  | AxiosRequestResponseError<ED, CD>;
+
+export type AxiosRequestResponseSuccess<
+  SD = any,
+  CD = any,
+> = AxiosResponseBase & {
+  data: SD;
+  isError: false;
+  response: AxiosResponse<SD, CD>;
+};
+
+export type AxiosRequestResponseError<
+  ED = any,
+  CD = any,
+> = AxiosResponseBase & {
+  data?: ED;
+  error: AxiosError<ED, CD> | Error;
+  isAxiosError: boolean;
+  isError: true;
+  isCancel: boolean;
+  isConnexionError: boolean;
+  isConnexionTimeoutError: boolean;
+  isNetworkError?: boolean;
+  response?: AxiosResponse<ED, CD>;
+};
+
+type AxiosResponseBase = {
+  elapsedTime: number;
+};
 ```
