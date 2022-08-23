@@ -54,6 +54,12 @@ const response = await request.start();
 ## Documentation
 
 ```typescript
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse as AxiosResponse_Import,
+} from 'axios';
+
 export type prepareAxios = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options?: AxiosOptions<SD, ED>,
@@ -61,10 +67,15 @@ export type prepareAxios = <SD = any, ED = any, CD = any>(
 
 export type AxiosConfig<CD = any> = AxiosRequestConfig<CD>;
 
-export type AxiosLog = 'verbose' | 'info' | 'success' | 'error' | 'response' | 'none';
+export type AxiosLog =
+  | 'verbose'
+  | 'info'
+  | 'success'
+  | 'error'
+  | 'response'
+  | 'none';
 
 export type AxiosOptions<SD = any, ED = any> = {
-  abort?: boolean;
   axios?: typeof axios;
   isNetworkConnected?: () => Promise<boolean>;
   log?: AxiosLog;
@@ -76,14 +87,14 @@ export type AxiosOptions<SD = any, ED = any> = {
   testStatus?: number;
 };
 
-export type AxiosResponseBase = {
-  elapsedTime: number;
-};
+export type AxiosResponse<SD = any, ED = any, CD = any> =
+  | AxiosResponseSuccess<SD, CD>
+  | AxiosResponseError<ED, CD>;
 
 export type AxiosResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
   data: SD;
   isError: false;
-  response: AxiosResponse<SD, CD>;
+  response: AxiosResponse_Import<SD, CD>;
 };
 
 export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
@@ -95,34 +106,21 @@ export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
   isConnexionError: boolean;
   isConnexionTimeoutError: boolean;
   isNetworkError?: boolean;
-  response?: AxiosResponse<ED, CD>;
+  response?: AxiosResponse_Import<ED, CD>;
 };
 
-export type AxiosResponseRequest<SD = any, ED = any, CD = any> = AxiosResponseSuccess<SD, CD> | AxiosResponseError<ED, CD>;
-
-export type AxiosRequestStart<SD = any, ED = any, CD = any> = (
-  options?: AxiosOptions<SD, ED>,
-) => Promise<AxiosResponseRequest<SD, ED, CD>>;
-
-export type AxiosRequestAbort = () => void;
+type AxiosResponseBase = {
+  elapsedTime: number;
+};
 
 export type AxiosRequest<SD = any, ED = any, CD = any> = {
   start: AxiosRequestStart<SD, ED, CD>;
   abort: AxiosRequestAbort;
 };
 
-export type AxiosRequestData<CD = any, SD = any, ED = any> = (
-  data: CD,
-  options?: AxiosOptions<SD, ED>,
-) => AxiosRequest<SD, ED, CD>;
+export type AxiosRequestStart<SD = any, ED = any, CD = any> = () => Promise<
+  AxiosResponseRequest<SD, ED, CD>
+>;
 
-export type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (
-  data?: CD | null,
-  options?: AxiosOptions<SD, ED>,
-) => AxiosRequest<SD, ED, CD>;
-
-export type AxiosRequestDataVoid<SD = any, ED = any> = (
-  data?: null,
-  options?: AxiosOptions<SD, ED>,
-) => AxiosRequest<SD, ED, never>;
+export type AxiosRequestAbort = () => void;
 ```

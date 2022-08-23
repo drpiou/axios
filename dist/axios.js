@@ -2,7 +2,7 @@ var ht = Object.defineProperty;
 var gt = (r, e, t) => e in r ? ht(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t;
 var nr = (r, e, t) => (gt(r, typeof e != "symbol" ? e + "" : e, t), t);
 import mr, { AxiosError as yt } from "axios";
-var bt = Object.defineProperty, $t = (r, e, t) => e in r ? bt(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, Tt = (r, e, t) => ($t(r, typeof e != "symbol" ? e + "" : e, t), t), q = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, At = typeof q == "object" && q && q.Object === Object && q, Ee = At, mt = Ee, St = typeof self == "object" && self && self.Object === Object && self, Ot = mt || St || Function("return this")(), g = Ot, wt = g, Ct = wt.Symbol, Sr = Ct, Fr = Sr, Pe = Object.prototype, xt = Pe.hasOwnProperty, Et = Pe.toString, R = Fr ? Fr.toStringTag : void 0;
+var bt = Object.defineProperty, $t = (r, e, t) => e in r ? bt(r, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : r[e] = t, Tt = (r, e, t) => ($t(r, typeof e != "symbol" ? e + "" : e, t), t), z = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {}, At = typeof z == "object" && z && z.Object === Object && z, Ee = At, mt = Ee, St = typeof self == "object" && self && self.Object === Object && self, Ot = mt || St || Function("return this")(), g = Ot, wt = g, Ct = wt.Symbol, Sr = Ct, Fr = Sr, Pe = Object.prototype, xt = Pe.hasOwnProperty, Et = Pe.toString, R = Fr ? Fr.toStringTag : void 0;
 function Pt(r) {
   var e = xt.call(r, R), t = r[R];
   try {
@@ -26,12 +26,12 @@ function Bt(r) {
   var e = typeof r;
   return r != null && (e == "object" || e == "function");
 }
-var Ie = Bt, Ht = Or, Kt = Ie, qt = "[object AsyncFunction]", zt = "[object Function]", Wt = "[object GeneratorFunction]", Jt = "[object Proxy]";
+var Ie = Bt, Ht = Or, Kt = Ie, zt = "[object AsyncFunction]", qt = "[object Function]", Wt = "[object GeneratorFunction]", Jt = "[object Proxy]";
 function Xt(r) {
   if (!Kt(r))
     return !1;
   var e = Ht(r);
-  return e == zt || e == Wt || e == qt || e == Jt;
+  return e == qt || e == Wt || e == zt || e == Jt;
 }
 var Yt = Xt, Zt = g, kt = Zt["__core-js_shared__"], Vt = kt, sr = Vt, Ur = function() {
   var r = /[^.]+$/.exec(sr && sr.keys && sr.keys.IE_PROTO || "");
@@ -127,8 +127,8 @@ var cr = { exports: {} };
   }
   r.exports = c;
 })(cr, cr.exports);
-var Ga = S, Ua = g, Ba = Ga(Ua, "DataView"), Ha = Ba, Ka = S, qa = g, za = Ka(qa, "Promise"), Wa = za, Ja = S, Xa = g, Ya = Ja(Xa, "Set"), Za = Ya, ka = S, Va = g, Qa = ka(Va, "WeakMap"), rn = Qa, fr = Ha, lr = Oa, vr = Wa, pr = Za, dr = rn, De = Or, w = je, Kr = "[object Map]", en = "[object Object]", qr = "[object Promise]", zr = "[object Set]", Wr = "[object WeakMap]", Jr = "[object DataView]", tn = w(fr), an = w(lr), nn = w(vr), sn = w(pr), on = w(dr), O = De;
-(fr && O(new fr(new ArrayBuffer(1))) != Jr || lr && O(new lr()) != Kr || vr && O(vr.resolve()) != qr || pr && O(new pr()) != zr || dr && O(new dr()) != Wr) && (O = function(r) {
+var Ga = S, Ua = g, Ba = Ga(Ua, "DataView"), Ha = Ba, Ka = S, za = g, qa = Ka(za, "Promise"), Wa = qa, Ja = S, Xa = g, Ya = Ja(Xa, "Set"), Za = Ya, ka = S, Va = g, Qa = ka(Va, "WeakMap"), rn = Qa, fr = Ha, lr = Oa, vr = Wa, pr = Za, dr = rn, De = Or, w = je, Kr = "[object Map]", en = "[object Object]", zr = "[object Promise]", qr = "[object Set]", Wr = "[object WeakMap]", Jr = "[object DataView]", tn = w(fr), an = w(lr), nn = w(vr), sn = w(pr), on = w(dr), O = De;
+(fr && O(new fr(new ArrayBuffer(1))) != Jr || lr && O(new lr()) != Kr || vr && O(vr.resolve()) != zr || pr && O(new pr()) != qr || dr && O(new dr()) != Wr) && (O = function(r) {
   var e = De(r), t = e == en ? r.constructor : void 0, a = t ? w(t) : "";
   if (a)
     switch (a) {
@@ -137,9 +137,9 @@ var Ga = S, Ua = g, Ba = Ga(Ua, "DataView"), Ha = Ba, Ka = S, qa = g, za = Ka(qa
       case an:
         return Kr;
       case nn:
-        return qr;
-      case sn:
         return zr;
+      case sn:
+        return qr;
       case on:
         return Wr;
     }
@@ -196,7 +196,7 @@ class _n {
     this.debug(ln, e);
   }
 }
-var z = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+var q = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
 function hn(r, e) {
   for (var t = -1, a = r == null ? 0 : r.length, n = 0, s = []; ++t < a; ) {
     var i = r[t];
@@ -221,7 +221,7 @@ function An(r, e) {
     a[t] = e(t);
   return a;
 }
-var mn = An, Sn = typeof z == "object" && z && z.Object === Object && z, Fe = Sn, On = Fe, wn = typeof self == "object" && self && self.Object === Object && self, Cn = On || wn || Function("return this")(), y = Cn, xn = y, En = xn.Symbol, V = En, Vr = V, Le = Object.prototype, Pn = Le.hasOwnProperty, In = Le.toString, M = Vr ? Vr.toStringTag : void 0;
+var mn = An, Sn = typeof q == "object" && q && q.Object === Object && q, Fe = Sn, On = Fe, wn = typeof self == "object" && self && self.Object === Object && self, Cn = On || wn || Function("return this")(), y = Cn, xn = y, En = xn.Symbol, V = En, Vr = V, Le = Object.prototype, Pn = Le.hasOwnProperty, In = Le.toString, M = Vr ? Vr.toStringTag : void 0;
 function jn(r) {
   var e = Pn.call(r, M), t = r[M];
   try {
@@ -244,9 +244,9 @@ var G = Hn;
 function Kn(r) {
   return r != null && typeof r == "object";
 }
-var U = Kn, qn = G, zn = U, Wn = "[object Arguments]";
+var U = Kn, zn = G, qn = U, Wn = "[object Arguments]";
 function Jn(r) {
-  return zn(r) && qn(r) == Wn;
+  return qn(r) && zn(r) == Wn;
 }
 var Xn = Jn, ee = Xn, Yn = U, Ge = Object.prototype, Zn = Ge.hasOwnProperty, kn = Ge.propertyIsEnumerable, Vn = ee(function() {
   return arguments;
@@ -293,11 +293,11 @@ var Fs = Ns, _r = { exports: {} };
   }();
   r.exports = o;
 })(_r, _r.exports);
-var Ls = Ds, Gs = Fs, te = _r.exports, ae = te && te.isTypedArray, Us = ae ? Gs(ae) : Ls, He = Us, Bs = mn, Hs = Ue, Ks = b, qs = Y.exports, zs = Be, Ws = He, Js = Object.prototype, Xs = Js.hasOwnProperty;
+var Ls = Ds, Gs = Fs, te = _r.exports, ae = te && te.isTypedArray, Us = ae ? Gs(ae) : Ls, He = Us, Bs = mn, Hs = Ue, Ks = b, zs = Y.exports, qs = Be, Ws = He, Js = Object.prototype, Xs = Js.hasOwnProperty;
 function Ys(r, e) {
-  var t = Ks(r), a = !t && Hs(r), n = !t && !a && qs(r), s = !t && !a && !n && Ws(r), i = t || a || n || s, o = i ? Bs(r.length, String) : [], c = o.length;
+  var t = Ks(r), a = !t && Hs(r), n = !t && !a && zs(r), s = !t && !a && !n && Ws(r), i = t || a || n || s, o = i ? Bs(r.length, String) : [], c = o.length;
   for (var u in r)
-    (e || Xs.call(r, u)) && !(i && (u == "length" || n && (u == "offset" || u == "parent") || s && (u == "buffer" || u == "byteLength" || u == "byteOffset") || zs(u, c))) && o.push(u);
+    (e || Xs.call(r, u)) && !(i && (u == "length" || n && (u == "offset" || u == "parent") || s && (u == "buffer" || u == "byteLength" || u == "byteOffset") || qs(u, c))) && o.push(u);
   return o;
 }
 var Zs = Ys, ks = Object.prototype;
@@ -336,7 +336,7 @@ var Ke = yi, bi = Ke, $i = wr;
 function Ti(r) {
   return r != null && $i(r.length) && !bi(r);
 }
-var qe = Ti, Ai = Zs, mi = fi, Si = qe;
+var ze = Ti, Ai = Zs, mi = fi, Si = ze;
 function Oi(r) {
   return Si(r) ? Ai(r) : mi(r);
 }
@@ -344,7 +344,7 @@ var xr = Oi, wi = Tn, Ci = xr;
 function xi(r, e) {
   return r && wi(r, e, Ci);
 }
-var Ei = xi, Pi = qe;
+var Ei = xi, Pi = ze;
 function Ii(r, e) {
   return function(t, a) {
     if (t == null)
@@ -371,16 +371,16 @@ var Bi = Ui;
 function Hi(r, e) {
   return r === e || r !== r && e !== e;
 }
-var ze = Hi, Ki = ze;
-function qi(r, e) {
+var qe = Hi, Ki = qe;
+function zi(r, e) {
   for (var t = r.length; t--; )
     if (Ki(r[t][0], e))
       return t;
   return -1;
 }
-var Q = qi, zi = Q, Wi = Array.prototype, Ji = Wi.splice;
+var Q = zi, qi = Q, Wi = Array.prototype, Ji = Wi.splice;
 function Xi(r) {
-  var e = this.__data__, t = zi(e, r);
+  var e = this.__data__, t = qi(e, r);
   if (t < 0)
     return !1;
   var a = e.length - 1;
@@ -464,12 +464,12 @@ var Uo = Go;
 function Bo(r, e) {
   return r == null ? void 0 : r[e];
 }
-var Ho = Bo, Ko = Uo, qo = Ho;
-function zo(r, e) {
-  var t = qo(r, e);
+var Ho = Bo, Ko = Uo, zo = Ho;
+function qo(r, e) {
+  var t = zo(r, e);
   return Ko(t) ? t : void 0;
 }
-var x = zo, Wo = x, Jo = y, Xo = Wo(Jo, "Map"), Er = Xo, Yo = x, Zo = Yo(Object, "create"), er = Zo, se = er;
+var x = qo, Wo = x, Jo = y, Xo = Wo(Jo, "Map"), Er = Xo, Yo = x, Zo = Yo(Object, "create"), er = Zo, se = er;
 function ko() {
   this.__data__ = se ? se(null) : {}, this.size = 0;
 }
@@ -546,7 +546,7 @@ function Uu(r, e) {
   var t = Gu(this, r), a = t.size;
   return t.set(r, e), this.size += t.size == a ? 0 : 1, this;
 }
-var Bu = Uu, Hu = Ou, Ku = ju, qu = Du, zu = Lu, Wu = Bu;
+var Bu = Uu, Hu = Ou, Ku = ju, zu = Du, qu = Lu, Wu = Bu;
 function P(r) {
   var e = -1, t = r == null ? 0 : r.length;
   for (this.clear(); ++e < t; ) {
@@ -556,8 +556,8 @@ function P(r) {
 }
 P.prototype.clear = Hu;
 P.prototype.delete = Ku;
-P.prototype.get = qu;
-P.prototype.has = zu;
+P.prototype.get = zu;
+P.prototype.has = qu;
 P.prototype.set = Wu;
 var Pr = P, Ju = rr, Xu = Er, Yu = Pr, Zu = 200;
 function ku(r, e) {
@@ -655,7 +655,7 @@ function Ec(r) {
     t[++e] = a;
   }), t;
 }
-var Pc = Ec, oe = V, ue = wc, Ic = ze, jc = Xe, Rc = xc, Mc = Pc, Dc = 1, Nc = 2, Fc = "[object Boolean]", Lc = "[object Date]", Gc = "[object Error]", Uc = "[object Map]", Bc = "[object Number]", Hc = "[object RegExp]", Kc = "[object Set]", qc = "[object String]", zc = "[object Symbol]", Wc = "[object ArrayBuffer]", Jc = "[object DataView]", ce = oe ? oe.prototype : void 0, or = ce ? ce.valueOf : void 0;
+var Pc = Ec, oe = V, ue = wc, Ic = qe, jc = Xe, Rc = xc, Mc = Pc, Dc = 1, Nc = 2, Fc = "[object Boolean]", Lc = "[object Date]", Gc = "[object Error]", Uc = "[object Map]", Bc = "[object Number]", Hc = "[object RegExp]", Kc = "[object Set]", zc = "[object String]", qc = "[object Symbol]", Wc = "[object ArrayBuffer]", Jc = "[object DataView]", ce = oe ? oe.prototype : void 0, or = ce ? ce.valueOf : void 0;
 function Xc(r, e, t, a, n, s, i) {
   switch (t) {
     case Jc:
@@ -671,7 +671,7 @@ function Xc(r, e, t, a, n, s, i) {
     case Gc:
       return r.name == e.name && r.message == e.message;
     case Hc:
-    case qc:
+    case zc:
       return r == e + "";
     case Uc:
       var o = Rc;
@@ -685,7 +685,7 @@ function Xc(r, e, t, a, n, s, i) {
       a |= Nc, i.set(r, e);
       var p = jc(o(r), o(e), a, n, s, i);
       return i.delete(r), p;
-    case zc:
+    case qc:
       if (or)
         return or.call(r) == or.call(e);
   }
@@ -764,7 +764,7 @@ var $f = bf, Tf = x, Af = y, mf = Tf(Af, "DataView"), Sf = mf, Of = x, wf = y, C
     }
   return e;
 });
-var Kf = m, ur = Je, qf = Xe, zf = Yc, Wf = $f, ge = Kf, ye = b, be = Y.exports, Jf = He, Xf = 1, $e = "[object Arguments]", Te = "[object Array]", W = "[object Object]", Yf = Object.prototype, Ae = Yf.hasOwnProperty;
+var Kf = m, ur = Je, zf = Xe, qf = Yc, Wf = $f, ge = Kf, ye = b, be = Y.exports, Jf = He, Xf = 1, $e = "[object Arguments]", Te = "[object Array]", W = "[object Object]", Yf = Object.prototype, Ae = Yf.hasOwnProperty;
 function Zf(r, e, t, a, n, s) {
   var i = ye(r), o = ye(e), c = i ? Te : ge(r), u = o ? Te : ge(e);
   c = c == $e ? W : c, u = u == $e ? W : u;
@@ -775,7 +775,7 @@ function Zf(r, e, t, a, n, s) {
     i = !0, p = !1;
   }
   if (f && !p)
-    return s || (s = new ur()), i || Jf(r) ? qf(r, e, t, a, n, s) : zf(r, e, c, t, a, n, s);
+    return s || (s = new ur()), i || Jf(r) ? zf(r, e, t, a, n, s) : qf(r, e, c, t, a, n, s);
   if (!(t & Xf)) {
     var h = p && Ae.call(r, "__wrapped__"), d = v && Ae.call(e, "__wrapped__");
     if (h || d) {
@@ -895,12 +895,12 @@ function et(r) {
   return e == "0" && 1 / r == -Hl ? "-0" : e;
 }
 var Mr = et, Kl = Mr;
-function ql(r) {
+function zl(r) {
   return r == null ? "" : Kl(r);
 }
-var Dr = ql, zl = b, Wl = jr, Jl = Nl, Xl = Dr;
+var Dr = zl, ql = b, Wl = jr, Jl = Nl, Xl = Dr;
 function Yl(r, e) {
-  return zl(r) ? r : Wl(r, e) ? [r] : Jl(Xl(r));
+  return ql(r) ? r : Wl(r, e) ? [r] : Jl(Xl(r));
 }
 var tt = Yl, Zl = Ir, kl = 1 / 0;
 function Vl(r) {
@@ -967,9 +967,9 @@ var Nv = Dv, Fv = Rv, Lv = Nv, Gv = jr, Uv = ar;
 function Bv(r) {
   return Gv(r) ? Fv(Uv(r)) : Lv(r);
 }
-var Hv = Bv, Kv = hl, qv = Ev, zv = Iv, Wv = b, Jv = Hv;
+var Hv = Bv, Kv = hl, zv = Ev, qv = Iv, Wv = b, Jv = Hv;
 function Xv(r) {
-  return typeof r == "function" ? r : r == null ? zv : typeof r == "object" ? Wv(r) ? qv(r[0], r[1]) : Kv(r) : Jv(r);
+  return typeof r == "function" ? r : r == null ? qv : typeof r == "object" ? Wv(r) ? zv(r[0], r[1]) : Kv(r) : Jv(r);
 }
 var Yv = Xv, Zv = Ne, kv = Gi, Vv = Yv, Qv = b;
 function rp(r, e) {
@@ -1029,9 +1029,9 @@ var Pp = Ep, it = "\\ud800-\\udfff", Ip = "\\u0300-\\u036f", jp = "\\ufe20-\\ufe
 function Kp(r) {
   return r.match(Hp) || [];
 }
-var qp = Kp, zp = $p, Wp = Pp, Jp = qp;
+var zp = Kp, qp = $p, Wp = Pp, Jp = zp;
 function Xp(r) {
-  return Wp(r) ? Jp(r) : zp(r);
+  return Wp(r) ? Jp(r) : qp(r);
 }
 var vt = Xp, Yp = /\s/;
 function Zp(r) {
@@ -1072,7 +1072,6 @@ class _d extends yt {
   }
 }
 const B = "none", pt = 200, hd = {
-  abort: !1,
   axios: mr,
   log: B,
   test: !1,
@@ -1089,10 +1088,7 @@ const B = "none", pt = 200, hd = {
     }
   };
   return {
-    start: (n) => {
-      const s = { ...e, ...n, testSignal: t }, i = dt(r, s);
-      return s.abort && t.current(), i;
-    },
+    start: () => dt(r, { ...e, testSignal: t }),
     abort: () => {
       t.current();
     }
@@ -1100,10 +1096,7 @@ const B = "none", pt = 200, hd = {
 }, yd = (r, e) => {
   const t = new AbortController();
   return {
-    start: (n) => {
-      const s = { ...e, ...n }, i = dt({ ...r, signal: t.signal }, s);
-      return s.abort && t.abort(), i;
-    },
+    start: () => dt({ ...r, signal: t.signal }, e),
     abort: () => {
       t.abort();
     }
