@@ -16,7 +16,6 @@ export type AxiosConfig<CD = any> = AxiosRequestConfig<CD>;
 export type AxiosLog = 'verbose' | 'info' | 'success' | 'error' | 'response' | 'none';
 
 export type AxiosOptions<SD = any, ED = any> = {
-  abort?: boolean;
   axios?: typeof axios;
   isNetworkConnected?: () => Promise<boolean>;
   log?: AxiosLog;
@@ -28,17 +27,26 @@ export type AxiosOptions<SD = any, ED = any> = {
   testStatus?: number;
 };
 
-export type AxiosResponseBase = {
-  elapsedTime: number;
+export type AxiosRequest<SD = any, ED = any, CD = any> = {
+  start: AxiosRequestStart<SD, ED, CD>;
+  abort: AxiosRequestAbort;
 };
 
-export type AxiosResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
+export type AxiosRequestStart<SD = any, ED = any, CD = any> = () => Promise<AxiosRequestResponse<SD, ED, CD>>;
+
+export type AxiosRequestAbort = () => void;
+
+export type AxiosRequestResponse<SD = any, ED = any, CD = any> =
+  | AxiosRequestResponseSuccess<SD, CD>
+  | AxiosRequestResponseError<ED, CD>;
+
+export type AxiosRequestResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
   data: SD;
   isError: false;
   response: AxiosResponse<SD, CD>;
 };
 
-export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
+export type AxiosRequestResponseError<ED = any, CD = any> = AxiosResponseBase & {
   data?: ED;
   error: AxiosError<ED, CD> | Error;
   isAxiosError: boolean;
@@ -50,33 +58,9 @@ export type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
   response?: AxiosResponse<ED, CD>;
 };
 
-export type AxiosResponseRequest<SD = any, ED = any, CD = any> = AxiosResponseSuccess<SD, CD> | AxiosResponseError<ED, CD>;
-
-export type AxiosRequestStart<SD = any, ED = any, CD = any> = (
-  options?: AxiosOptions<SD, ED>,
-) => Promise<AxiosResponseRequest<SD, ED, CD>>;
-
-export type AxiosRequestAbort = () => void;
-
-export type AxiosRequest<SD = any, ED = any, CD = any> = {
-  start: AxiosRequestStart<SD, ED, CD>;
-  abort: AxiosRequestAbort;
+type AxiosResponseBase = {
+  elapsedTime: number;
 };
-
-export type AxiosRequestData<CD = any, SD = any, ED = any> = (
-  data: CD,
-  options?: AxiosOptions<SD, ED>,
-) => AxiosRequest<SD, ED, CD>;
-
-export type AxiosRequestDataOptional<CD = any, SD = any, ED = any> = (
-  data?: CD | null,
-  options?: AxiosOptions<SD, ED>,
-) => AxiosRequest<SD, ED, CD>;
-
-export type AxiosRequestDataVoid<SD = any, ED = any> = (
-  data?: null,
-  options?: AxiosOptions<SD, ED>,
-) => AxiosRequest<SD, ED, never>;
 
 type AxiosAbortSignal = {
   current: () => void;
@@ -91,7 +75,6 @@ const DEFAULT_LOG: AxiosLog = 'none';
 const DEFAULT_STATUS = 200;
 
 const DEFAULT_OPTIONS: AxiosOptions = {
-  abort: false,
   axios,
   log: DEFAULT_LOG,
   test: false,
@@ -114,30 +97,22 @@ export const prepareAxios = <SD = any, ED = any, CD = any>(
   }
 
   if (prepareOptions.test) {
-    return prepareAxiosTest(config, prepareOptions);
+    return prepareAxiosTest<SD, ED, CD>(config, prepareOptions);
   } else {
-    return prepareAxiosReal(config, prepareOptions);
+    return prepareAxiosReal<SD, ED, CD>(config, prepareOptions);
   }
 };
 
-export const prepareAxiosTest = <SD = any, ED = any, CD = any>(
+const prepareAxiosTest = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
-  options?: AxiosOptions<SD, ED>,
+  options: AxiosOptions<SD, ED>,
 ): AxiosRequest<SD, ED, CD> => {
   const testSignal: AxiosAbortSignal = {
     current: () => undefined,
   };
 
-  const start: AxiosRequestStart<SD, ED, CD> = (overrideOptions) => {
-    const startOptions: AxiosStartOptions<SD, ED> = { ...options, ...overrideOptions, testSignal };
-
-    const request = begin(config, startOptions);
-
-    if (startOptions.abort) {
-      testSignal.current();
-    }
-
-    return request;
+  const start: AxiosRequestStart<SD, ED, CD> = () => {
+    return begin<SD, ED, CD>(config, { ...options, testSignal });
   };
 
   return {
@@ -148,22 +123,14 @@ export const prepareAxiosTest = <SD = any, ED = any, CD = any>(
   };
 };
 
-export const prepareAxiosReal = <SD = any, ED = any, CD = any>(
+const prepareAxiosReal = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
-  options?: AxiosOptions<SD, ED>,
+  options: AxiosOptions<SD, ED>,
 ): AxiosRequest<SD, ED, CD> => {
   const controller = new AbortController();
 
-  const start: AxiosRequestStart<SD, ED, CD> = (overrideOptions) => {
-    const startOptions: AxiosOptions<SD, ED> = { ...options, ...overrideOptions };
-
-    const request = begin({ ...config, signal: controller.signal }, startOptions);
-
-    if (startOptions.abort) {
-      controller.abort();
-    }
-
-    return request;
+  const start: AxiosRequestStart<SD, ED, CD> = () => {
+    return begin<SD, ED, CD>({ ...config, signal: controller.signal }, options);
   };
 
   return {
@@ -177,7 +144,7 @@ export const prepareAxiosReal = <SD = any, ED = any, CD = any>(
 const begin = async <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosStartOptions<SD, ED> | AxiosOptions<SD, ED>,
-): Promise<AxiosResponseRequest<SD, ED, CD>> => {
+): Promise<AxiosRequestResponse<SD, ED, CD>> => {
   const startTime = Date.now();
 
   if (['verbose', 'info'].includes(options.log || DEFAULT_LOG)) {
@@ -185,16 +152,16 @@ const begin = async <SD = any, ED = any, CD = any>(
   }
 
   if (options.test) {
-    return beginTest(config, options as AxiosStartOptions<SD, ED>);
+    return beginTest<SD, ED, CD>(config, options as AxiosStartOptions<SD, ED>);
   } else {
-    return beginReal(config, options);
+    return beginReal<SD, ED, CD>(config, options);
   }
 };
 
 const beginTest = async <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosStartOptions<SD, ED>,
-): Promise<AxiosResponseRequest<SD, ED, CD>> => {
+): Promise<AxiosRequestResponse<SD, ED, CD>> => {
   const startTime = Date.now();
 
   const response: AxiosResponse<SD | ED | undefined, CD> = {
@@ -247,7 +214,7 @@ const beginTest = async <SD = any, ED = any, CD = any>(
 const beginReal = async <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosOptions<SD, ED>,
-): Promise<AxiosResponseRequest<SD, ED, CD>> => {
+): Promise<AxiosRequestResponse<SD, ED, CD>> => {
   const startTime = Date.now();
 
   let response;
@@ -266,10 +233,10 @@ const parseSuccess = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosOptions<SD, ED>,
   startTime: number,
-): AxiosResponseSuccess<SD, CD> => {
+): AxiosRequestResponseSuccess<SD, CD> => {
   const endTime = Date.now();
 
-  const successResponse: AxiosResponseSuccess<SD, CD> = {
+  const successResponse: AxiosRequestResponseSuccess<SD, CD> = {
     data: response.data,
     elapsedTime: endTime - startTime,
     isError: false,
@@ -288,7 +255,7 @@ const parseError = async <ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosOptions<any, ED>,
   startTime: number,
-): Promise<AxiosResponseError<ED, CD>> => {
+): Promise<AxiosRequestResponseError<ED, CD>> => {
   const endTime = Date.now();
 
   const hasCode = 'code' in error;
@@ -306,7 +273,7 @@ const parseError = async <ED = any, CD = any>(
       : undefined
     : await options.isNetworkConnected?.();
 
-  const errorResponse: AxiosResponseError<ED, CD> = {
+  const errorResponse: AxiosRequestResponseError<ED, CD> = {
     data: hasResponse ? error.response?.data : undefined,
     elapsedTime: endTime - startTime,
     error,
