@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse as AxiosResponse_Import } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 export declare class AxiosException<T = any, D = any> extends AxiosError<T, D> {
     __CANCEL__?: boolean;
     __NETWORK_ERROR__?: boolean;
@@ -16,13 +16,19 @@ export declare type AxiosOptions<SD = any, ED = any> = {
     testSleep?: number;
     testStatus?: number;
 };
-export declare type AxiosResponse<SD = any, ED = any, CD = any> = AxiosResponseSuccess<SD, CD> | AxiosResponseError<ED, CD>;
-export declare type AxiosResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
+export declare type AxiosRequest<SD = any, ED = any, CD = any> = {
+    start: AxiosRequestStart<SD, ED, CD>;
+    abort: AxiosRequestAbort;
+};
+export declare type AxiosRequestStart<SD = any, ED = any, CD = any> = () => Promise<AxiosRequestResponse<SD, ED, CD>>;
+export declare type AxiosRequestAbort = () => void;
+export declare type AxiosRequestResponse<SD = any, ED = any, CD = any> = AxiosRequestResponseSuccess<SD, CD> | AxiosRequestResponseError<ED, CD>;
+export declare type AxiosRequestResponseSuccess<SD = any, CD = any> = AxiosResponseBase & {
     data: SD;
     isError: false;
-    response: AxiosResponse_Import<SD, CD>;
+    response: AxiosResponse<SD, CD>;
 };
-export declare type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase & {
+export declare type AxiosRequestResponseError<ED = any, CD = any> = AxiosResponseBase & {
     data?: ED;
     error: AxiosError<ED, CD> | Error;
     isAxiosError: boolean;
@@ -31,17 +37,11 @@ export declare type AxiosResponseError<ED = any, CD = any> = AxiosResponseBase &
     isConnexionError: boolean;
     isConnexionTimeoutError: boolean;
     isNetworkError?: boolean;
-    response?: AxiosResponse_Import<ED, CD>;
+    response?: AxiosResponse<ED, CD>;
 };
 declare type AxiosResponseBase = {
     elapsedTime: number;
 };
-export declare type AxiosRequest<SD = any, ED = any, CD = any> = {
-    start: AxiosRequestStart<SD, ED, CD>;
-    abort: AxiosRequestAbort;
-};
-export declare type AxiosRequestStart<SD = any, ED = any, CD = any> = () => Promise<AxiosResponse<SD, ED, CD>>;
-export declare type AxiosRequestAbort = () => void;
 export declare const prepareAxios: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options?: AxiosOptions<SD, ED> | undefined) => AxiosRequest<SD, ED, CD>;
 export declare const prepareAxiosTest: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
 export declare const prepareAxiosReal: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;

@@ -2,11 +2,11 @@ export type {
   AxiosConfig,
   AxiosLog,
   AxiosOptions,
-  AxiosResponse,
-  AxiosResponseSuccess,
-  AxiosResponseError,
   AxiosRequest,
   AxiosRequestStart,
   AxiosRequestAbort,
+  AxiosRequestResponse,
+  AxiosRequestResponseSuccess,
+  AxiosRequestResponseError,
 } from './lib/index';
 export { prepareAxios } from './lib/index';
