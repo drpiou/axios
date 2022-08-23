@@ -43,6 +43,4 @@ declare type AxiosResponseBase = {
     elapsedTime: number;
 };
 export declare const prepareAxios: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options?: AxiosOptions<SD, ED> | undefined) => AxiosRequest<SD, ED, CD>;
-export declare const prepareAxiosTest: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
-export declare const prepareAxiosReal: <SD = any, ED = any, CD = any>(config: AxiosConfig<CD>, options: AxiosOptions<SD, ED>) => AxiosRequest<SD, ED, CD>;
 export {};

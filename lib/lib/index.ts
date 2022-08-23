@@ -103,7 +103,7 @@ export const prepareAxios = <SD = any, ED = any, CD = any>(
   }
 };
 
-export const prepareAxiosTest = <SD = any, ED = any, CD = any>(
+const prepareAxiosTest = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosOptions<SD, ED>,
 ): AxiosRequest<SD, ED, CD> => {
@@ -123,7 +123,7 @@ export const prepareAxiosTest = <SD = any, ED = any, CD = any>(
   };
 };
 
-export const prepareAxiosReal = <SD = any, ED = any, CD = any>(
+const prepareAxiosReal = <SD = any, ED = any, CD = any>(
   config: AxiosConfig<CD>,
   options: AxiosOptions<SD, ED>,
 ): AxiosRequest<SD, ED, CD> => {
